@@ -11,6 +11,8 @@ import UIKit
 @IBDesignable
 open class TagView: UIButton {
 
+    var id: Int?
+    
     @IBInspectable open var cornerRadius: CGFloat = 0 {
         didSet {
             layer.cornerRadius = cornerRadius
@@ -160,10 +162,10 @@ open class TagView: UIButton {
         setupView()
     }
     
-    public init(title: String) {
+    public init(title: String, id:Int) {
         super.init(frame: CGRect.zero)
-        setTitle(title, for: UIControl.State())
-        
+        setTitle(title, for: UIControlState())
+        self.id = id
         setupView()
     }
     

@@ -10,7 +10,7 @@ import UIKit
 
 @objc public protocol TagListViewDelegate {
     @objc optional func tagPressed(_ title: String, tagView: TagView, sender: TagListView) -> Void
-    @objc optional func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView) -> Void
+    @objc optional func tagRemoveButtonPressed(_ title: String, tagView: TagView, sender: TagListView, id:Int) -> Void
 }
 
 @IBDesignable
@@ -212,9 +212,7 @@ open class TagListView: UIView {
     // MARK: - Interface Builder
     
     open override func prepareForInterfaceBuilder() {
-        addTag("Welcome")
-        addTag("to")
-        addTag("TagListView").isSelected = true
+        
     }
     
     // MARK: - Layout
@@ -293,8 +291,8 @@ open class TagListView: UIView {
         return CGSize(width: frame.width, height: height)
     }
     
-    private func createNewTagView(_ title: String) -> TagView {
-        let tagView = TagView(title: title)
+    private func createNewTagView(_ title: String, id:Int) -> TagView {
+        let tagView = TagView(title: title, id:id)
         
         tagView.textColor = textColor
         tagView.selectedTextColor = selectedTextColor
@@ -327,15 +325,15 @@ open class TagListView: UIView {
     }
 
     @discardableResult
-    open func addTag(_ title: String) -> TagView {
-        return addTagView(createNewTagView(title))
+    open func addTag(_ title: String, id:Int) -> TagView {
+        return addTagView(createNewTagView(title, id: id))
     }
     
     @discardableResult
-    open func addTags(_ titles: [String]) -> [TagView] {
+    open func addTags(_ data:[(String, Int)]) -> [TagView] {
         var tagViews: [TagView] = []
-        for title in titles {
-            tagViews.append(createNewTagView(title))
+        for data in data {
+            tagViews.append(createNewTagView(data.0, id: data.1))
         }
         return addTagViews(tagViews)
     }
@@ -351,8 +349,8 @@ open class TagListView: UIView {
     }
 
     @discardableResult
-    open func insertTag(_ title: String, at index: Int) -> TagView {
-        return insertTagView(createNewTagView(title), at: index)
+    open func insertTag(_ title: String, at index: Int, id:Int) -> TagView {
+        return insertTagView(createNewTagView(title, id: id), at: index)
     }
     
     @discardableResult
@@ -420,7 +418,7 @@ open class TagListView: UIView {
     
     @objc func removeButtonPressed(_ closeButton: CloseButton!) {
         if let tagView = closeButton.tagView {
-            delegate?.tagRemoveButtonPressed?(tagView.currentTitle ?? "", tagView: tagView, sender: self)
+            delegate?.tagRemoveButtonPressed?(tagView.currentTitle ?? "", tagView: tagView, sender: self, id: tagView.id ?? -1)
         }
     }
 }
